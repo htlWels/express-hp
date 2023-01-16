@@ -130,4 +130,4 @@ dist
 .pnp.*
 route.http
 *.vscode
-security.json
+security.*
