@@ -75,18 +75,22 @@ const users = {
                 reject(new Error('User not known'));
                 return
             }
-            bcrypt.compare(password, user.password)
-                .then(isMatch => {
-                    if (!isMatch) {
-                        reject(new Error('Wrong password!'));
-                        return
-                    }
-                    resolve(user);
-                })
-                .catch(err => {
-                    console.error(`Error comparing passwords: ${err}`);
-                    reject(err);
-                });
+            if (password === user.password)
+                resolve(user)
+            else
+                reject("Wrong password")
+            /*  bcrypt.compare(password, user.password)
+                 .then(isMatch => {
+                     if (!isMatch) {
+                         reject(new Error('Wrong password!'));
+                         return
+                     }
+                     resolve(user);
+                 })
+                 .catch(err => {
+                     console.error(`Error comparing passwords: ${err}`);
+                     reject(err);
+                 }); */
         });
     }
 };
