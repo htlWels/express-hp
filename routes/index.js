@@ -39,7 +39,7 @@ router.post('/auth', async (request, response) => {
   {
     try {
       const user = await users.searchAndCompare(username, password);
-      res.send('Logged in successfully.');
+      response.send('Logged in successfully.');
     }
     catch (err) {
       console.log(err)
