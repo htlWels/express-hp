@@ -56,7 +56,7 @@ const users = {
                     fs.writeFile(PASSWD_FILE, JSON.stringify(data))
                         .catch(err => {
                             username
-                            console.error(`Error writing security.json: ${err}`);
+ console.error(`Error writing security.json: ${err}`);
                             throw err;
                         })
                     resolve();
