@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+
 const users = require('../utils/userPassword.js');
 
 /* GET home page. */
@@ -29,26 +30,29 @@ router.post('/register', async (req, res) => {
 
 
 
-router.post('/auth', async (request, response) => {
+router.post('/auth', async (request, response, next) => {
   // Capture the input fields
   let username = request.body.username;
   let password = request.body.password;
   // Ensure the input fields exists and are not empty
 
-  if (username && password) //xists and are not empty
+  if (username && password) //Xsits and are not empty
   {
     try {
       const user = await users.searchAndCompare(username, password);
       response.send('Logged in successfully.');
     }
     catch (err) {
-      console.log(err)
-      response.send('Incorrect Username and/or Password!');
+      console.log(err.message)
+      if (err.message.startsWith("User"))
+        response.sendStatus(435).send("User not known")
+      else if (err.message.startsWith("Password"))
+        response.sendStatus(436).send('Incorrect Password!');
+      else
+        response.sendStatus(500).send('Unexpected error occured');
     }
   } else {
-
-    response.send('Please enter Username and Password!');
-    response.end();
+    response.status(400).send("Params missing  ")
   }
 });
 

@@ -55,11 +55,10 @@ const users = {
                     data.push(user);
                     fs.writeFile(PASSWD_FILE, JSON.stringify(data))
                         .catch(err => {
-                            username
- console.error(`Error writing security.json: ${err}`);
-                            throw err;
+                            console.error(`Error writing security.json: ${err}`);
+                            reject(new Error('Error writing security.json: ' + err));
                         })
-                    resolve();
+                    resolve(user);
                 })
                 .catch(err => {
                     console.error(`Error hashing password: ${err}`);
@@ -72,25 +71,13 @@ const users = {
             const user = data.find(u => u.username === username);
             if (!user) {
                 console.log("User: " + username + " is not known!")
-                reject(new Error('User not known'));
+                reject(new Error('User: not known'));
                 return
             }
             if (password === user.password)
                 resolve(user)
             else
-                reject("Wrong password")
-            /*  bcrypt.compare(password, user.password)
-                 .then(isMatch => {
-                     if (!isMatch) {
-                         reject(new Error('Wrong password!'));
-                         return
-                     }
-                     resolve(user);
-                 })
-                 .catch(err => {
-                     console.error(`Error comparing passwords: ${err}`);
-                     reject(err);
-                 }); */
+                reject(new Error('Password: false'))
         });
     }
 };
