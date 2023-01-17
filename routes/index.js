@@ -45,11 +45,11 @@ router.post('/auth', async (request, response, next) => {
     catch (err) {
       console.log(err.message)
       if (err.message.startsWith("User"))
-        response.sendStatus(435).send("User not known")
+        response.sendStatus(435)
       else if (err.message.startsWith("Password"))
-        response.sendStatus(436).send('Incorrect Password!');
+        response.sendStatus(436)
       else
-        response.sendStatus(500).send('Unexpected error occured');
+        response.sendStatus(500)
     }
   } else {
     response.status(400).send("Params missing  ")
