@@ -34,38 +34,43 @@ const users = {
     readDBFile: function () {
         return data;
     },
-    writeDBFile: function (newData) {
-        data = newData;
-        return fs.writeFile(PASSWD_FILE, JSON.stringify(data))
-            .catch(err => {
-                username
+    writeDBFile: function () {
+        fsS.writeFile(PASSWD_FILE, JSON.stringify(data, null, 2), (err) => {
+            if (err) {
                 console.error(`Error writing security.json: ${err}`);
                 throw err;
-            });
+            }
+            console.log('Data written to file');
+        });
     },
     addUser: function (user) {
         return new Promise((resolve, reject) => {
             const duplicateUser = data.find(u => u.username === user.username);
             if (duplicateUser) {
-                reject(new Error('User already exists'));
+                reject(new Error('User: already exists'));
+                return
             }
             bcrypt.hash(user.password, 10)
                 .then(hashedPassword => {
                     user.password = hashedPassword;
                     data.push(user);
-                    fs.writeFile(PASSWD_FILE, JSON.stringify(data))
-                        .catch(err => {
-                            console.error(`Error writing security.json: ${err}`);
-                            reject(new Error('Error writing security.json: ' + err));
-                        })
+                    try {
+                        users.writeDBFile()
+                    } catch (err) {
+                        console.log("File: Error in writing file")
+                        return reject(err);
+                    }
                     resolve(user);
+                    return
                 })
-                .catch(err => {
-                    console.error(`Error hashing password: ${err}`);
+                .catch((err) => {
+                    console.log(err)
                     reject(err);
-                });
+
+                })
         });
     },
+
     searchAndCompare: function (username, password) {
         return new Promise((resolve, reject) => {
             const user = data.find(u => u.username === username);

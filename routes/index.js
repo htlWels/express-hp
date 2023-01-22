@@ -3,6 +3,18 @@ var router = express.Router();
 
 const users = require('../utils/userPassword.js');
 
+/*   Used HTTP Error Codes
+400: client side error (wrong/missing fieldnames:  username,password)
+435: User not found in D B
+436: Wrong password
+437: User already exist
+
+500: Server Side Error
+
+*/
+
+
+
 /* GET home page. */
 /* router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' });
@@ -16,15 +28,19 @@ router.post('/register', async (req, res) => {
     if (username && password) {
       await users.addUser({
         username,
-        password
+        password,
       });
-      res.status(200).send('User created successfully.');
+      res.sendStatus(200);
     } else {
-      res.status(400).send("Required parameters: username,password not provided");
+      console.log("Required parameters: username, password not provided")
+      res.sendStatus(400)
     }
   } catch (err) {
     console.error("Error occured in creating user! " + err);
-    res.status(400).send("Error occured in creating user! ");
+    if (err.message.startsWith("User"))
+      res.sendStatus(437)
+    else
+      res.sendStatus(500)
   }
 });
 
@@ -40,7 +56,7 @@ router.post('/auth', async (request, response, next) => {
   {
     try {
       const user = await users.searchAndCompare(username, password);
-      response.send('Logged in successfully.');
+      response.sendStatus(200)
     }
     catch (err) {
       console.log(err.message)
