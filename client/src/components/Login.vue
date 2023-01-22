@@ -1,4 +1,4 @@
-<template>
+ <template>
   <div id="app">
     <div id="login">
       <div id="description">
@@ -33,25 +33,26 @@
 
 <script setup>
 import { ref } from 'vue';
-import bcrypt from 'bcryptjs';
+import router from '@/router';
 const username = ref('');
-const salt = bcrypt.genSaltSync(10);
-
 const hidePassword = ref(true);
 const password = ref('');
 
 const doLogin = () => {
-  const hash = bcrypt.hashSync(password.value, salt);
+  //const hash = bcrypt.hashSync(password.value, salt);
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       username: username.value,
-      password: hash,
+      password: password.value,
     }),
   };
-  fetch('/auth', requestOptions).then((response) => response.json());
-  //.then((data) => (this.postId = data.id));
+  fetch('/auth', requestOptions).then((response) => {
+    if (response.status == 200) {
+      router.push('/home');
+    }
+  });
 };
 </script>
 
@@ -61,17 +62,11 @@ const doLogin = () => {
   font-family: Verdana, sans-serif;
 }
 
-html,
-body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
-
 div#app {
   width: 100%;
   height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 div#app div#login {

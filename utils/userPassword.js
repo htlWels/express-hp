@@ -79,10 +79,15 @@ const users = {
                 reject(new Error('User: not known'));
                 return
             }
-            if (password === user.password)
-                resolve(user)
-            else
-                reject(new Error('Password: false'))
+            bcrypt.compare(password, user.password, function (err, result) {
+                if (result == true) {
+                    resolve(user)
+                }
+                else {
+                    reject(new Error('Password: false'))
+                }
+            });
+
         });
     }
 };

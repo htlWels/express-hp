@@ -1,16 +1,14 @@
 <template>
-  <Login />
+  <!-- <div>
+    <router-link to="/about">About</router-link> |
+    <router-link to="/home">Home</router-link>
+  </div> -->
+
+  <router-view />
 </template>
 
-<script>
-import Login from './components/Login.vue';
-
-export default {
-  name: 'App',
-  components: {
-    Login,
-  },
-};
+<script setup>
+localStorage.setItem('authorized', 'false');
 </script>
 
 <style>
