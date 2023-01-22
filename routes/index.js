@@ -36,7 +36,6 @@ router.post('/register', async (req, res) => {
       res.sendStatus(400)
     }
   } catch (err) {
-    console.error("Error occured in creating user! " + err);
     if (err.message.startsWith("User"))
       res.sendStatus(437)
     else
@@ -52,14 +51,12 @@ router.post('/auth', async (request, response, next) => {
   let password = request.body.password;
   // Ensure the input fields exists and are not empty
 
-  if (username && password) //Xsits and are not empty
-  {
+  if (username && password) {
     try {
       const user = await users.searchAndCompare(username, password);
       response.sendStatus(200)
     }
     catch (err) {
-      console.log(err.message)
       if (err.message.startsWith("User"))
         response.sendStatus(435)
       else if (err.message.startsWith("Password"))
