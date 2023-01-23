@@ -37,11 +37,12 @@ router.post('/register', async (req, res) => {
     }
   } catch (err) {
     if (err.message.startsWith("User"))
-      res.sendStatus(437)
+      res.sendStatus(437) // user already exists
     else
-      res.sendStatus(500)
+      res.sendStatus(500)  // unexpected error
   }
 });
+
 
 
 

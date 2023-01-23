@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="dashboard">
     <Dashboard  />
   </div>
 </template>
@@ -16,7 +16,7 @@ export default {
 };
 </script>
 <style scoped>
-.home {
+.dashboard {
   margin-bottom: 50px;
 }
 </style>

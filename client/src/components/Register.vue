@@ -2,10 +2,10 @@
   <div id="app">
     <div id="login">
       <div id="description">
-        <h1>Login</h1>
+        <h1>Register</h1>
       </div>
       <div id="form">
-        <form @submit.prevent="doLogin">
+        <form @submit.prevent="doRegister">
           <label for="username">Username</label>
           <input
             type="text"
@@ -24,12 +24,12 @@
             placeholder="**********"
           />
 
-          <button type="submit">Log in</button>
+          <button type="submit">Register</button>
         </form>
-      </div>
-      <div v-if= "error">
+        <div v-if= "error">
         <h2>ERROR</h2>
         <p>{{ error }}</p>
+      </div>
       </div>
     </div>
   </div>
@@ -43,9 +43,8 @@ const hidePassword = ref(true);
 let password = ref('');
 let error= ref('')
 
-const doLogin = () => {
+const doRegister = () => {
   error.value=""
-  //const hash = bcrypt.hashSync(password.value, salt);
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -54,20 +53,16 @@ const doLogin = () => {
       password: password.value,
     }),
   };
-  fetch('/auth', requestOptions).then((response) => {
+  fetch('/register', requestOptions).then((response) => {
     if (response.status == 200) {
       router.push('/home');
     }
-    else if (response.status == 435)
-      router.push("/register")
-    else if (response.status == 436) {
-      error.value="Wrong password"
-      password.value=''
+    else if (response.status == 437) { // user already exists
+      error.value=`User ${username.value} already exists!`
+      username.value=""
     }
     else
-    error.value="Error on server side!"
-      
-    
+      error.value="Unexpected error on server side!"
   });
 };
 </script>
