@@ -15,13 +15,26 @@ const openGPT = {
         return response.choices[0].text;
     },
 
-    runCompletion: async function () {
-        const completion = await openai.createCompletion({
-            model: "text-davinci-003",
-            prompt: "How are you today?",
-        });
-        console.log("runCompletion: " + completion.data.choices[0].text)
-        return completion.data.choices[0].text
+    runCompletion: async function (question = "How are you today?") {
+        try {
+            const completion = await openai.createCompletion({
+                model: "text-davinc-003",
+                prompt: question,
+            });
+            console.log("runCompletion: " + completion.data.choices[0].text)
+            return completion.data.choices[0].text
+        } catch (error) {
+            if (error.response) {
+                console.log("resp" + error.response.status);
+                console.log(error.response.data);
+                return "Engine does not work"
+              } else {
+                console.log("!response" + error.message);
+                return "Engine does not work"
+              }
+              
+
+        }
     },
 
     hello: function () {

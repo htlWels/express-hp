@@ -11,4 +11,12 @@ router.get('/', async function (req, res, next) {
     res.status(200).end(msg)
   });
 
+
+
+/* GET users listing. */
+router.post('/', async  (req, res, next)=> {
+  const msg = await openGpt.runCompletion()
+  res.status(200).end(msg)
+});
+
 module.exports = router;
