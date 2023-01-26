@@ -4,9 +4,16 @@ const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
+// API-DOC: https://beta.openai.com/docs/api-reference/completions/create?lang=node.js
+//console.log("AI-Key: " + process.env.OPENAI_API_KEY)
 
 const openGPT = {
 
+    getAvailableModels: async function() {
+        const response = await openai.listModels()
+        console.log(response.data)
+        return JSON.stringify(response.data)
+    },
     translateText: async function (text, fromLanguage, toLanguage) {
         const response = await openai.Language.create({
             prompt: `Translate "${text}" from ${fromLanguage} to ${toLanguage}`,
@@ -15,11 +22,16 @@ const openGPT = {
         return response.choices[0].text;
     },
 
-    runCompletion: async function (question = "How are you today?") {
+    runCompletion: async function (question) {
         try {
             const completion = await openai.createCompletion({
-                model: "text-davinc-003",
+                model: "text-davinci-003",
                 prompt: question,
+                "max_tokens": 250,
+                "top_p": 1,
+                "n": 1,
+                "stream": false,
+                "logprobs": null
             });
             console.log("runCompletion: " + completion.data.choices[0].text)
             return completion.data.choices[0].text
@@ -28,11 +40,11 @@ const openGPT = {
                 console.log("resp" + error.response.status);
                 console.log(error.response.data);
                 return "Engine does not work"
-              } else {
+            } else {
                 console.log("!response" + error.message);
                 return "Engine does not work"
-              }
-              
+            }
+
 
         }
     },

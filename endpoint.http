@@ -1,0 +1,24 @@
+POST http://localhost:3001/auth
+content-type: application/json
+
+{
+    "username": "sonnag",
+    "password": "sonntag"
+}
+
+###
+GET http://localhost:3001/ai
+
+
+###
+GET http://localhost:3001/ai/models
+
+###
+
+POST http://localhost:3001/ai
+content-type: application/json
+
+{
+    "question": "Guglhupf mit Rosinen"
+}
+
