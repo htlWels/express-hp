@@ -22,12 +22,12 @@ const openGPT = {
         return response.choices[0].text;
     },
 
-    runCompletion: async function (question) {
+    runCompletion: async function (question,numberOfTokens) {
         try {
             const completion = await openai.createCompletion({
                 model: "text-davinci-003",
                 prompt: question,
-                "max_tokens": 250,
+                "max_tokens": numberOfTokens,
                 "top_p": 1,
                 "n": 1,
                 "stream": false,
@@ -48,7 +48,28 @@ const openGPT = {
 
         }
     },
+    createImage: async function (_prompt) {
+        try {
+            const completion = await openai.createImage({
+                prompt: "christmas tree",
+                "size": "1024x1024",
+                "n": 2,
+            });
+            console.log("createImage: " + completion.data.choices[0].text)
+            return completion.data.choices[0].text
+        } catch (error) {
+            if (error.response) {
+                console.log("resp" + error.response.status);
+                console.log(error.response.data);
+                return "Engine does not work"
+            } else {
+                console.log("!response" + error.message);
+                return "Engine does not work"
+            }
 
+
+        }
+    },
     hello: function () {
         console.log("ss")
         return "ss"

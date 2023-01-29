@@ -15,10 +15,22 @@ GET http://localhost:3001/ai/models
 
 ###
 
-POST http://localhost:3001/ai
+POST http://localhost:3001/ai/completion
 content-type: application/json
 
 {
-    "question": "Guglhupf mit Rosinen"
+    "question": "Secure routes of endpoints of an express server"
+
+
+}
+###
+
+POST http://localhost:3001/ai/image
+content-type: application/json
+
+{
+    "imageDescript": "christmas tree"
+
+
 }
 

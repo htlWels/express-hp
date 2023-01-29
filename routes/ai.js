@@ -5,9 +5,6 @@ var router = express.Router();
 const openGpt = require("../worker/openGPT.js")
 
 
-/* GET users listing. */
-
-
 /* GET home page. */
 router.get('/', function (req, res, next) {
   let text = "<h1>OpenAI LP</h1>  ist ein US-amerikanisches Unternehmen, das sich mit der Erforschung von  \
@@ -33,9 +30,20 @@ router.get('/models', async function (req, res, next) {
 
 
 /* GET users listing. */
-router.post('/', async  (req, res, next)=> {
-  const msg = await openGpt.runCompletion("Wie backe ich einen Guglhupf mit Rosinen?")
+router.post('/completion', async  (req, res, next)=> {
+  let question = req.body.question;
+  let number_token = req.body.tokens;
+  if (!number_token)
+    number_token = 1024
+  const msg = await openGpt.runCompletion(question,number_token)
   res.status(200).end(msg)
 });
 
+
+/* GET users listing. */
+router.post('/image', async  (req, res, next)=> {
+  let imageDescript = req.body.question;
+  const msg = await openGpt.createImage(imageDescript)
+  res.status(200).end(msg)
+});
 module.exports = router;
