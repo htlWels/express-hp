@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const users = require('../utils/userPassword.js');
+//const users = require('../utils/userPassword.js');
 const userManagement = require('../persistence/controller/UserlController')
 
 /*   Used HTTP Error Codes
@@ -57,14 +57,17 @@ router.post('/auth', async (request, response, next) => {
 
   if (username && password) {
     try {
-      const user = await users.searchAndCompare(username, password);
+      const { err, result, storedUser } = await userManagement.user_authorized(username, password);
+      if (err)
+        return response.sendStatus(500) // error in bcrypt.compare
+      if (result == false)
+        return response.sendStatus(436)
+      // store user object in session
       response.sendStatus(200)
     }
     catch (err) {
       if (err.message.startsWith("User"))
         response.sendStatus(435)
-      else if (err.message.startsWith("Password"))
-        response.sendStatus(436)
       else
         response.sendStatus(500)
     }

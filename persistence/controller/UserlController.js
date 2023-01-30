@@ -1,37 +1,21 @@
 /* global require */
 
-const User = require('../model/User'),
-    bcrypt = require('bcrypt')
+const User = require('../model/User')
 
 
 
 // eslint-disable-next-line no-undef
-exports.user_authorized = function (_user, _passwd, callBack) {
+exports.user_authorized = async function (_user, _passwd, callBack) {
     console.log("Enter user_authorized ....");
-    try {
-        User.find({
-            'loginInfo.user': _user,
-        }, (err, data) => {
-            if (err) {
-                console.log(`UserSchema: Error occured: ${err}`)
-                return callBack(err, null)
-            }
-            if (data.length === 0) {
-                return callBack(null, data)
-            }
-            bcrypt.compare(_passwd, data[0].loginInfo.password, (err, res) => {
-                if (err) {
-                    console.log(`bcrypt: Error occured: ${err}`)
-                    return callBack(err, null)
-                }
-                callBack(null, res)
-            })
-        })
-    } catch (err) {
-        console.log(`Error occured in function user_authorized() : ${err}`)
+    const storedUser = await User.find({ 'loginInfo.user': _user });
+    if (!storedUser.length) {
+        console.log(`User: ${_user} not found.`);
+        throw new Error(`User: ${_user} not found.`);
     }
+    storedUser.isAuthorized(_passwd, (err, result) => {
+        return err, result, storedUser
+    })
 
-    console.log('END')
 }
 
 // eslint-disable-next-line no-undef
