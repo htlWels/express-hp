@@ -59,21 +59,15 @@ process.on('SIGINT', function() {
 const mongoose = require('mongoose');
 
 
-const uri = 'mongodb+srv://refr:47rf-winnt75@cluster0.gyig1.mongodb.net/admin?retryWrites=true';
+//const uri = 'mongodb+srv://refr:47rf-winnt75@cluster0.gyig1.mongodb.net/admin?retryWrites=true';
+const uri = process.env.MONGO_CONNECT
 // uri = 'mongodb://localhost/ahit5?retryWrites=true'
 
 // uri = "mongodb+srv://horus:47oldEgyptKing47@risingsun-4o7zv.gcp.mongodb.net/wawi?retryWrites=true?ssl=true"
 
 const options = {
     useNewUrlParser: true,
-    //useCreateIndex: true,
-    //useFindAndModify: false,
-    autoIndex: false, // Don't build indexes
-    //reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
-    //reconnectInterval: 500, // Reconnect every 500ms
-    //poolSize: 10, // Maintain up to 10 socket connections
-    // If not connected, return errors immediately rather than waiting for reconnect
-    //bufferMaxEntries: 0,
+    autoIndex: true, 
     connectTimeoutMS: 10000, // Give up initial connection after 10 seconds
     socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
     family: 4 // Use IPv4, skip trying IPv6
@@ -81,7 +75,7 @@ const options = {
 
 mongoose.Promise = global.Promise;
 try {
-    console.log('DBURL:', uri);
+    mongoose.set('strictQuery', false)
 
     mongoose
         .connect(uri, options)

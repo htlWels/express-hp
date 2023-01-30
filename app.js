@@ -1,4 +1,6 @@
 var createError = require('http-errors');
+var dotenv = require('dotenv')
+dotenv.config({ silent: true })
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -6,9 +8,9 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var mongoDB = require('./persistence/db.js')
-
 var app = express();
+
+var mongoDB = require('./persistence/db.js')
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

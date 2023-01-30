@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 const users = require('../utils/userPassword.js');
+const userManagement = require('../persistence/controller/UserlController')
 
 /*   Used HTTP Error Codes
 400: client side error (wrong/missing fieldnames:  username,password)
@@ -26,16 +27,18 @@ router.post('/register', async (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
     if (username && password) {
-      await users.addUser({
+      console.log("Username: " + username)
+      await userManagement.user_save(
         username,
         password,
-      });
+      );
       res.sendStatus(200);
     } else {
       console.log("Required parameters: username, password not provided")
       res.sendStatus(400)
     }
   } catch (err) {
+    console.log(err)
     if (err.message.startsWith("User"))
       res.sendStatus(437) // user already exists
     else

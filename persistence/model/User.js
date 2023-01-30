@@ -2,34 +2,32 @@
 /* global require */
 
 const mongoose = require('./../db'),
-    { Schema, } = mongoose
+    { Schema } = mongoose
 
 
 
 const UserSchema = new Schema({
     loginInfo: {
-        user: String,
-        password: String,
+        user: { type: String, 
+            required: true,
+            index: true,
+            unique: true  },
+        password: { type: String, required: true }
     },
-    firstName: String,
-    lastName: String,
-    status: Boolean,
+    status: Boolean,  // logged on ?
     logHistory: [{
-        logon: Date,
+        registered:Date,
+        lastLogin: Date,
     },],
 
 })
 
 class TheUser {
 
-    get fullName() {
-        return `${this.firstName} ${this.lastName}`
+    get userName() {
+        return `${this.user}`
     }
-    set fullName(v) {
-        const firstSpace = v.indexOf(' ')
-        this.firstName = v.split(' ')[0]
-        this.lastName = firstSpace === -1 ? '' : v.substr(firstSpace + 1)
-    }
+   
     static authorized(passwd) {
         return this.password === passwd
     }
@@ -41,7 +39,5 @@ class TheUser {
 
 UserSchema.loadClass(TheUser)
 
-//Export model
-//MyModel.events.on('error', err => console.log(err.message));
-// eslint-disable-next-line no-undef
-module.exports = mongoose.model('User', UserSchema)
+
+module.exports = mongoose.model('TheUsers', UserSchema)
