@@ -5,22 +5,22 @@ const User = require('../model/User')
 
 
 // eslint-disable-next-line no-undef
-exports.user_authorized = async function (_user, _passwd, callBack) {
+exports.user_authorized = async function (_user, _passwd) {
     console.log("Enter user_authorized ....");
     const storedUser = await User.find({ 'loginInfo.user': _user });
-    if (!storedUser.length) {
+    if (!storedUser) {
         console.log(`User: ${_user} not found.`);
         throw new Error(`User: ${_user} not found.`);
     }
-    storedUser.isAuthorized(_passwd, (err, result) => {
-        return err, result, storedUser
-    })
+    const user = storedUser[0];
+    const isPasswordMatched= await user.comparePassword(_passwd);
+    return isPasswordMatched
 
 }
 
 // eslint-disable-next-line no-undef
 //const writeAndRead = async () => {
-exports.user_save = async (newUser, newPasswd) => {
+exports.user_save = async (newUser, newPasswd, theRole) => {
     const duplicateUser = await User.find({ 'loginInfo.user': newUser });
 
     if (duplicateUser.length) {
@@ -30,19 +30,16 @@ exports.user_save = async (newUser, newPasswd) => {
     const user = new User({
         loginInfo: {
             user: newUser,
-            password: newPasswd,
+            password: newPasswd
         },
         status: true,
-        logHistory: {
-            registered: new Date(),
-            lastLogin: new Date()
-        }
+        role:theRole
     });
     try {
         const result = await user.save();
         return result;
     } catch (err) {
         console.log(`saving error: ${err}`)
-        throw new Error('DB: Error occured in saving data');
+        throw new Error(`DB: Error ${err} occured in saving data`);
     }
 }

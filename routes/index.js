@@ -24,13 +24,14 @@ const userManagement = require('../persistence/controller/UserlController')
 
 router.post('/register', async (req, res) => {
   try {
-    let username = req.body.username;
-    let password = req.body.password;
+    const {username, password,role}  = req.body;
+    
     if (username && password) {
       console.log("Username: " + username)
       await userManagement.user_save(
         username,
         password,
+        role==null? 'user':role
       );
       res.sendStatus(200);
     } else {
@@ -42,7 +43,7 @@ router.post('/register', async (req, res) => {
     if (err.message.startsWith("User"))
       res.sendStatus(437) // user already exists
     else
-      res.sendStatus(500)  // unexpected error
+      res.status(500).end(err.message)  // unexpected error
   }
 });
 
@@ -57,9 +58,7 @@ router.post('/auth', async (request, response, next) => {
 
   if (username && password) {
     try {
-      const { err, result, storedUser } = await userManagement.user_authorized(username, password);
-      if (err)
-        return response.sendStatus(500) // error in bcrypt.compare
+      const result= await userManagement.user_authorized(username, password);
       if (result == false)
         return response.sendStatus(436)
       // store user object in session
@@ -68,8 +67,11 @@ router.post('/auth', async (request, response, next) => {
     catch (err) {
       if (err.message.startsWith("User"))
         response.sendStatus(435)
-      else
+      else {
+        console.log(err)
         response.sendStatus(500)
+      }
+       
     }
   } else {
     response.status(400).send("Params missing  ")
