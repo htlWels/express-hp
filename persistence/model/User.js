@@ -31,6 +31,10 @@ const UserSchema = new Schema({
         type: Boolean,  // logged on ?
         default:false
     },
+    locked: {
+        type: Boolean,  // logged on ?
+        default:false
+    },
     logHistory: {
         registered: {
             type: Date,
