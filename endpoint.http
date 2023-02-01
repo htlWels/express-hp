@@ -19,7 +19,7 @@ POST http://localhost:3001/ai/completion
 content-type: application/json
 
 {
-    "question": "Secure routes of endpoints of an express server"
+    "question": "Wie funktioniert ein E-Motor?"
 
 
 }
