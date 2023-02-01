@@ -24,27 +24,34 @@ router.get('/', function (req, res, next) {
 
 /* GET list all models */
 router.get('/models', async function (req, res, next) {
-  const msg = await openGpt.getAvailableModels()
-  if (msg)
-    res.status(200).end(msg)
-  else
-  res.status(500).end("Error on serverside")
+  try {
+    const msg = await openGpt.getAvailableModels()
+    if (msg)
+      res.status(200).end(msg)
+    else
+      res.status(500).end("Error on serverside")
+  } catch (error) {
+      if (error.message.startsWith("AI"))
+        res.status(438).end(error.message)
+      else
+      res.status(500).end(error.message)
+  }
 });
 
- 
+
 /* GET users listing. */
-router.post('/completion', async  (req, res, next)=> {
+router.post('/completion', async (req, res, next) => {
   let question = req.body.question;
   let number_token = req.body.tokens;
   if (!number_token)
     number_token = 1024
-  const msg = await openGpt.runCompletion(question,number_token)
+  const msg = await openGpt.runCompletion(question, number_token)
   res.status(200).end(msg)
 });
 
 
 /* GET users listing. */
-router.post('/image', async  (req, res, next)=> {
+router.post('/image', async (req, res, next) => {
   let imageDescript = req.body.question;
   const msg = await openGpt.createImage(imageDescript)
   res.status(200).end(msg)

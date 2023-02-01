@@ -9,15 +9,20 @@ const openai = new OpenAIApi(configuration);
 
 const openGPT = {
 
-    getAvailableModels: async function() {
+    getAvailableModels: async function () {
         try {
-        const response = await openai.listModels()
-        console.log(response.data)
-        return JSON.stringify(response.data)
+            const response = await openai.listModels()
+            console.log(response.data)
+            return JSON.stringify(response.data)
         } catch (error) {
             if (error.response) {
-                console.log("resp" + error.response.status);
-                console.log(error.response.data.error.code)}
+                console.log("OpenAI Response: " + error.response.status);
+                console.log(error.response.data.error.code)
+                throw new Error(`AI: Status: ${error.response.data.error.code}`)
+            } else {
+                console.log("Error on server side: " + error)
+                throw new Error(`Server Side Error: ${error}`)
+            }
         }
     },
     translateText: async function (text, fromLanguage, toLanguage) {
@@ -28,7 +33,7 @@ const openGPT = {
         return response.choices[0].text;
     },
 
-    runCompletion: async function (question,numberOfTokens) {
+    runCompletion: async function (question, numberOfTokens) {
         try {
             const completion = await openai.createCompletion({
                 model: "text-davinci-003",
