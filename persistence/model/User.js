@@ -32,7 +32,7 @@ const UserSchema = new Schema({
         default:false
     },
     locked: {
-        type: Boolean,  // logged on ?
+        type: Boolean,  // locked ?
         default:false
     },
     logHistory: {
