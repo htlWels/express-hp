@@ -131,3 +131,4 @@ dist
 route.http
 *.vscode
 security.*
+node-modules
