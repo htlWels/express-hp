@@ -10,9 +10,15 @@ const openai = new OpenAIApi(configuration);
 const openGPT = {
 
     getAvailableModels: async function() {
+        try {
         const response = await openai.listModels()
         console.log(response.data)
         return JSON.stringify(response.data)
+        } catch (error) {
+            if (error.response) {
+                console.log("resp" + error.response.status);
+                console.log(error.response.data.error.code)}
+        }
     },
     translateText: async function (text, fromLanguage, toLanguage) {
         const response = await openai.Language.create({
@@ -36,6 +42,7 @@ const openGPT = {
             console.log("runCompletion: " + completion.data.choices[0].text)
             return completion.data.choices[0].text
         } catch (error) {
+            console.log(error)
             if (error.response) {
                 console.log("resp" + error.response.status);
                 console.log(error.response.data);

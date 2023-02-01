@@ -25,7 +25,10 @@ router.get('/', function (req, res, next) {
 /* GET list all models */
 router.get('/models', async function (req, res, next) {
   const msg = await openGpt.getAvailableModels()
-  res.status(200).end(msg)
+  if (msg)
+    res.status(200).end(msg)
+  else
+  res.status(500).end("Error on serverside")
 });
 
  
