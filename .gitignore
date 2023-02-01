@@ -128,7 +128,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
-route.http
 *.vscode
 security.*
-endpoint.http
+node-modules
