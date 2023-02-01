@@ -1,0 +1,35 @@
+POST http://localhost:3001/auth
+content-type: application/json
+
+{
+    "username": "sonnag",
+    "password": "sonntag"
+}
+
+###
+GET http://localhost:3001/ai
+
+
+###
+GET http://localhost:3001/ai/models
+
+###
+
+POST http://localhost:3001/ai/completion
+content-type: application/json
+
+{
+    "question": "Wie funktioniert ein E-Motor?"
+
+}
+###
+
+POST http://localhost:3001/ai/image
+content-type: application/json
+
+{
+    "imageDescript": "christmas tree"
+
+
+}
+
