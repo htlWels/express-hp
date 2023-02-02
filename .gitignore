@@ -131,3 +131,5 @@ dist
 *.vscode
 security.*
 endpoint.http
+node_modules
+
