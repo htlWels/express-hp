@@ -3,20 +3,16 @@
 const User = require('../model/User')
 
 
-// eslint-disable-next-line no-undef
 exports.user_authorized = async function (_user, _passwd) {
     const storedUser = await User.findOne({ 'loginInfo.user': _user });
     if (!storedUser) {
         console.log(`User: ${_user} not found.`);
         throw new Error(`User: ${_user} not found.`);
     }
-    //const user = storedUser[0];
     const isPasswordMatched= await storedUser.comparePassword(_passwd);
-    return isPasswordMatched
+    return {isPasswordMatched,storedUser}
 }
 
-// eslint-disable-next-line no-undef
-//const writeAndRead = async () => {
 exports.user_save = async (newUser, newPasswd, theRole) => {
     const duplicateUser = await User.find({ 'loginInfo.user': newUser });
 

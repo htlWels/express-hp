@@ -12,7 +12,7 @@ const openGPT = {
     getAvailableModels: async function () {
         try {
             const response = await openai.listModels()
-            console.log(response.data)
+            //console.log(response.data)
             return JSON.stringify(response.data)
         } catch (error) {
             if (error.response) {
@@ -44,17 +44,16 @@ const openGPT = {
                 "stream": false,
                 "logprobs": null
             });
-            console.log("runCompletion: " + completion.data.choices[0].text)
+            //console.log("runCompletion: " + completion.data.choices[0].text)
             return completion.data.choices[0].text
         } catch (error) {
             console.log(error)
             if (error.response) {
                 console.log("resp" + error.response.status);
-                console.log(error.response.data);
-                return "Engine does not work"
+                throw new Error(`AI: Status: ${error.response.data.error.code}`)
             } else {
-                console.log("!response" + error.message);
-                return "Engine does not work"
+                 console.log("Error on server side: " + error)
+                throw new Error(`Server Side Error: ${error}`)
             }
 
 
@@ -81,10 +80,6 @@ const openGPT = {
 
 
         }
-    },
-    hello: function () {
-        console.log("ss")
-        return "ss"
     }
 }
 

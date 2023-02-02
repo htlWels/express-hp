@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-
+const utils = require("../utils/routerUtils")
 
 const openGpt = require("../worker/openGPT.js")
 
@@ -24,31 +24,75 @@ router.get('/', function (req, res, next) {
 
 /* GET list all models */
 router.get('/models', async function (req, res, next) {
+  if (!req.session.loggedIn) 
+    return res.status(401).end(utils.createError("Only logged in users can use this service"))
   try {
     const msg = await openGpt.getAvailableModels()
     if (msg)
       res.status(200).end(msg)
     else
-      res.status(500).end("Error on serverside")
+      res.status(500).end(utils.createError("Error on serverside"))
   } catch (error) {
-      if (error.message.startsWith("AI"))
-        res.status(438).end(error.message)
-      else
-      res.status(500).end(error.message)
+    if (error.message.startsWith("AI"))
+      res.status(438).end(utils.createError(error.message))
+    else
+      res.status(500).end(utils.createError(error.message))
   }
 });
 
 
-/* GET users listing. */
+/* GET completion of question */
 router.post('/completion', async (req, res, next) => {
-  let question = req.body.question;
-  let number_token = req.body.tokens;
-  if (!number_token)
-    number_token = 1024
-  const msg = await openGpt.runCompletion(question, number_token)
-  res.status(200).end(msg)
+  if (!req.session.loggedIn) 
+    return res.status(401).end(utils.createError("Only logged in users can use this service"))
+
+  try {
+    let question = req.body.question;
+    let number_token = req.body.tokens;
+    if (!number_token)
+      number_token = 1024
+    const msg = await openGpt.runCompletion(question, number_token)
+    res.status(200).end(msg)
+  } catch (error) {
+    if (error.message.startsWith("AI"))
+      res.status(438).end(utils.createError(error.message))
+    else
+      res.status(500).end(utils.createError(error.message))
+  }
+
 });
 
+router.post('/correctText', async (req, res, next) => {
+  if (!req.session.loggedIn) 
+    return res.status(401).end(utils.createError("Only logged in users can use this service"))
+  try {
+    let input = req.body.input;
+    let msg="NOT implemented yet!"
+    res.status(200).end(msg)
+  } catch (error) {
+    if (error.message.startsWith("AI"))
+      res.status(438).end(utils.createError(error.message))
+    else
+      res.status(500).end(utils.createError(error.message))
+  }
+
+});
+
+router.post('/correctCode', async (req, res, next) => {
+  if (!req.session.loggedIn) 
+    return res.status(401).end(utils.createError("Only logged in users can use this service"))
+  try {
+    let input = req.body.input;
+    let msg="NOT implemented yet!"
+    res.status(200).end(msg)
+  } catch (error) {
+    if (error.message.startsWith("AI"))
+      res.status(438).end(utils.createError(error.message))
+    else
+      res.status(500).end(utils.createError(error.message))
+  }
+
+});
 
 /* GET users listing. */
 router.post('/image', async (req, res, next) => {
@@ -56,4 +100,17 @@ router.post('/image', async (req, res, next) => {
   const msg = await openGpt.createImage(imageDescript)
   res.status(200).end(msg)
 });
+
+router.get("*", (req, res) => {
+  if (!req.session.loggedIn) 
+    return res.status(401).end(utils.createError("Only logged in users can use this service"))
+  utils.handleInvalidRoute(req, res)
+});
+router.post("*", (req, res) => {
+  if (!req.session.loggedIn) 
+    return res.status(401).end(utils.createError("Only logged in users can use this service"))
+  utils.handleInvalidRoute(req, res)
+}); 
+
+
 module.exports = router;

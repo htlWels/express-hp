@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-
+const utils = require("../utils/routerUtils")
 //const users = require('../utils/userPassword.js');
 const userManagement = require('../persistence/controller/UserlController')
 
@@ -23,15 +23,17 @@ const userManagement = require('../persistence/controller/UserlController')
 /* ************************************** **************************** ****************** */
 
 router.post('/register', async (req, res) => {
+  if (!req.session.loggedIn) 
+    return res.status(401).end(utils.createError("You are already logged in!"))
+
   try {
-    const {username, password,role}  = req.body;
-    
+    const { username, password, role } = req.body;
     if (username && password) {
       console.log("Username: " + username)
       await userManagement.user_save(
         username,
         password,
-        role==null? 'user':role
+        role == null ? 'user' : role
       );
       res.sendStatus(200);
     } else {
@@ -43,26 +45,29 @@ router.post('/register', async (req, res) => {
     if (err.message.startsWith("User"))
       res.sendStatus(437) // user already exists
     else
-      res.status(500).end(err.message)  // unexpected error
+      res.status(500)  // unexpected error
   }
 });
 
 
 
 
-router.post('/auth', async (request, response, next) => {
+router.post('/login', async (request, response, next) => {
   // Capture the input fields
-  let username = request.body.username;
-  let password = request.body.password;
-  // Ensure the input fields exists and are not empty
+  const { username, password } = request.body;
 
+  // Ensure the input fields exists and are not empty
   if (username && password) {
     try {
-      const result= await userManagement.user_authorized(username, password);
-      if (result == false)
+      const { isPasswordMatched, storedUser } = await userManagement.user_authorized(username, password);
+      if (isPasswordMatched == false)
         return response.sendStatus(436)
       // store user object in session
+      request.session.loggedIn = true;
+      request.session.user = storedUser
+      console.log(storedUser.username)
       response.sendStatus(200)
+
     }
     catch (err) {
       if (err.message.startsWith("User"))
@@ -71,11 +76,31 @@ router.post('/auth', async (request, response, next) => {
         console.log(err)
         response.sendStatus(500)
       }
-       
+
     }
   } else {
     response.status(400).send("Params missing  ")
   }
 });
 
+router.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.redirect('/');
+})
+
+router.get('/status', (req, res) => {
+  if (req.session.loggedIn) {
+    const us = req.session.user
+    res.send('You are logged in: ' + us.loginInfo.user + ", role: " + us.role);
+  } else {
+    res.send('You are logged out');
+  }
+});/* 
+
+router.get("*", (req, res) => {
+  utils.handleInvalidRoute(req, res)
+});
+router.post("*", (req, res) => {
+  utils.handleInvalidRoute(req, res)
+}); */
 module.exports = router;

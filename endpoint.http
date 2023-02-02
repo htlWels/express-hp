@@ -1,4 +1,13 @@
-POST http://localhost:3001/auth
+###
+GET http://localhost:3001/status
+
+###
+GET http://localhost:3001/logout
+
+
+###
+
+POST http://localhost:3001/login
 content-type: application/json
 
 {
@@ -21,6 +30,10 @@ GET http://localhost:3001/ai
 
 
 ###
+GET http://localhost:3001/ai/s
+
+
+###
 GET http://localhost:3001/ai/models
 
 ###
@@ -32,7 +45,19 @@ content-type: application/json
     "question": "Wie funktioniert ein E-Motor?"
 
 }
+
+
+
 ###
+
+POST http://localhost:3001/ai/correctText
+content-type: application/json
+
+{
+    "input": "What day of the wek is tody?"
+
+}
+
 
 POST http://localhost:3001/ai/image
 content-type: application/json
