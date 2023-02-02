@@ -7,13 +7,13 @@ const User = require('../model/User')
 // eslint-disable-next-line no-undef
 exports.user_authorized = async function (_user, _passwd) {
     console.log("Enter user_authorized ....");
-    const storedUser = await User.find({ 'loginInfo.user': _user });
+    const storedUser = await User.findOne({ 'loginInfo.user': _user });
     if (!storedUser) {
         console.log(`User: ${_user} not found.`);
         throw new Error(`User: ${_user} not found.`);
     }
-    const user = storedUser[0];
-    const isPasswordMatched= await user.comparePassword(_passwd);
+    //const user = storedUser[0];
+    const isPasswordMatched= await storedUser.comparePassword(_passwd);
     return isPasswordMatched
 
 }
