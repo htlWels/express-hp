@@ -1,11 +1,0 @@
---2023-01-31 15:02:53--  https://hypate.webuntis.com/WebUntis/monitor?school=htbla_wels
-Resolving hypate.webuntis.com (hypate.webuntis.com)... 213.208.138.154, 213.208.138.156, 213.208.138.157, ...
-Connecting to hypate.webuntis.com (hypate.webuntis.com)|213.208.138.154|:443... connected.
-HTTP request sent, awaiting response... 200 200
-Length: unspecified [text/html]
-Saving to: ‘monitor?school=htbla_wels’
-
-monitor?school=htbla_wels                   [<=>                                                                           ]       0  --.-KB/s               monitor?school=htbla_wels                   [ <=>                                                                          ]  14.82K  --.-KB/s    in 0s      
-
-2023-01-31 15:02:55 (40.5 MB/s) - ‘monitor?school=htbla_wels’ saved [15177]
-
