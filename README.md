@@ -1,22 +1,24 @@
 
 
-Route: /
+**Route:** /
 
-GET
-/status:   logged in | logged out
+**GET**
+* /status:   logged in | logged out
 
-POST
-/register: register new user
-/login:    log in
-/logout:   log out
+**POST**
+* /register: register new user
+* /login:    log in
+* /logout:   log out
 
 
-Route: /ai
+**Route:** /ai
 
-/ : get
-/models : get all models
+**GET**
 
-POST
-/completion: answer question
-/correctText: correct text input
-/correctCode: correct code input
+* / : get info about openai 
+* /models : get all models
+
+**POST**
+* /completion: answer question
+* /correctText: correct text input
+* /correctCode: correct code input
