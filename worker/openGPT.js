@@ -59,6 +59,29 @@ const openGPT = {
 
         }
     },
+    runTextCorrection: async function (text) {
+        try {
+            const completion = await openai.createEdit({
+                model: "text-davinci-edit-001",
+                input: text,
+                instruction:"Fix the spelling mistakes",
+                temperature: 0.9
+            });
+            //console.log("runCompletion: " + completion.data.choices[0].text)
+            return completion.data.choices[0].text
+        } catch (error) {
+            console.log(error)
+            if (error.response) {
+                console.log("resp" + error.response.status);
+                throw new Error(`AI: Status: ${error.response.data.error.code}`)
+            } else {
+                 console.log("Error on server side: " + error)
+                throw new Error(`Server Side Error: ${error}`)
+            }
+
+
+        }
+    }, 
     createImage: async function (_prompt) {
         try {
             const completion = await openai.createImage({

@@ -62,12 +62,13 @@ router.post('/completion', async (req, res, next) => {
 
 });
 
+///https://platform.openai.com/docs/api-reference/edits/create
 router.post('/correctText', async (req, res, next) => {
   if (!req.session.loggedIn) 
     return res.status(401).end(utils.createError("Only logged in users can use this service"))
   try {
     let input = req.body.input;
-    let msg="NOT implemented yet!"
+    let msg=await openGpt.runTextCorrection(input)
     res.status(200).end(msg)
   } catch (error) {
     if (error.message.startsWith("AI"))

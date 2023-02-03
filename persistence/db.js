@@ -59,7 +59,7 @@ process.on('SIGINT', function() {
 const mongoose = require('mongoose');
 
 
-//const uri = 'mongodb+srv://refr:47rf-winnt75@cluster0.gyig1.mongodb.net/admin?retryWrites=true';
+//const uri = 'mongodb+srv://refr:<password>@cluster0.gyig1.mongodb.net/admin?retryWrites=true';
 const uri = process.env.MONGO_CONNECT
 // uri = 'mongodb://localhost/ahit5?retryWrites=true'
 
