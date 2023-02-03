@@ -23,7 +23,7 @@ const userManagement = require('../persistence/controller/UserlController')
 /* ************************************** **************************** ****************** */
 
 router.post('/register', async (req, res) => {
-  if (!req.session.loggedIn) 
+  if (req.session.loggedIn) 
     return res.status(401).end(utils.createError("You are already logged in!"))
 
   try {
@@ -50,7 +50,7 @@ router.post('/register', async (req, res) => {
 });
 
 
-
+ 
 
 router.post('/login', async (request, response, next) => {
   // Capture the input fields
@@ -65,7 +65,7 @@ router.post('/login', async (request, response, next) => {
       // store user object in session
       request.session.loggedIn = true;
       request.session.user = storedUser
-      console.log(storedUser.username)
+     // console.log(storedUser.username)
       response.sendStatus(200)
 
     }
@@ -85,7 +85,7 @@ router.post('/login', async (request, response, next) => {
 
 router.get('/logout', (req, res) => {
   req.session.destroy();
-  res.redirect('/');
+  //res.redirect('/');
 })
 
 router.get('/status', (req, res) => {

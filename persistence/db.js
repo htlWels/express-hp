@@ -1,60 +1,6 @@
 /* eslint-disable no-undef */
 // grab the things we need
 
-/*
-
-var mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
-mongoose.Promise = require ('bluebird');
-var dbURI = 'mongodb://localhost:27017/books';
-
-var options = {
-  db: { native_parser: true },
-  server: { poolSize: 5 },
-  replset: { rs_name: 'myReplicaSetName' }mongodb+srv://localhost,
-  user: 'myUserName',
-  pass: 'myPassword'
-}
-mongoose.connect(uri, options);
-
-var options = {
-    db: {
-        native_parser: true
-    },
-    server: {
-        poolSize: 5
-    }
-}
-// http://mongoosejs.com/docs/connections.html
-
-mongoose.connect(dbURI, options);
-
-var db = mongoose.connection;
-
-db.on('error', function() {
-   console.log('Error occoured in opening Mongo DB');
-});
-
-db.once('open', function() {
-  console.log('Mongoose is connected to database. ');
-});
-
-db.on('connected', function() {
-    console.log('Mongoose default connection open to ' + dbURI);
-});
-db.on('disconnected', function() {
-    console.log('Mongoose connection disconnected.');
-});
-
-process.on('SIGINT', function() {
-    mongoose.connection.close(function() {
-        console.log('Mongoose connection disconnected trough app termination.');
-    });
-});
-
-*/
-// import {mongoose, Promise, connect, connection, } from 'mongoose'
-
 /* global require */
 const mongoose = require('mongoose');
 
