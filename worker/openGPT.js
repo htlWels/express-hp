@@ -61,14 +61,7 @@ const openGPT = {
     },
     runTextCorrection: async function (text) {
         try {
-            const completion = await openai.createEdit({
-                model: "text-davinci-edit-001",
-                input: text,
-                instruction:"Fix the spelling mistakes",
-                temperature: 0.9
-            });
-            //console.log("runCompletion: " + completion.data.choices[0].text)
-            return completion.data.choices[0].text
+        
         } catch (error) {
             console.log(error)
             if (error.response) {
