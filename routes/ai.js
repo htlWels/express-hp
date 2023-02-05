@@ -1,9 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const utils = require("../utils/routerUtils")
-
+//const jwt = require("jsonwebtoken");
 const openGpt = require("../worker/openGPT.js")
-
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -22,11 +21,10 @@ router.get('/', function (req, res, next) {
 });
 
 
+
 /* GET list all models */
-router.get('/models', async function (req, res, next) {
-  if (!req.session.loggedIn) 
-    return res.status(401).end(utils.createError("Only logged in users can use this service"))
-  try {
+router.get('/models',utils.checkToken, async function (req, res, next) {
+   try {
     const msg = await openGpt.getAvailableModels()
     if (msg)
       res.status(200).end(msg)
@@ -42,10 +40,8 @@ router.get('/models', async function (req, res, next) {
 
 
 /* GET completion of question */
-router.post('/completion', async (req, res, next) => {
-  if (!req.session.loggedIn) 
-    return res.status(401).end(utils.createError("Only logged in users can use this service"))
-
+router.post('/completion', utils.checkToken,async (req, res, next) => {
+ 
   try {
     let question = req.body.question;
     let number_token = req.body.tokens;
@@ -63,27 +59,23 @@ router.post('/completion', async (req, res, next) => {
 });
 
 ///https://platform.openai.com/docs/api-reference/edits/create
-router.post('/correctText', async (req, res, next) => {
+router.post('/correctText', utils.checkToken,async (req, res, next) => {
 
 
 });
 
 /* GET users listing. */
-router.post('/image', async (req, res, next) => {
+router.post('/image', utils.checkToken,async (req, res, next) => {
   let imageDescript = req.body.question;
   const msg = await openGpt.createImage(imageDescript)
   res.status(200).end(msg)
 });
 
-router.get("*", (req, res) => {
-  if (!req.session.loggedIn) 
-    return res.status(401).end(utils.createError("Only logged in users can use this service"))
-  utils.handleInvalidRoute(req, res)
+router.get("*", utils.checkToken,(req, res) => {
+   utils.handleInvalidRoute(req, res)
 });
-router.post("*", (req, res) => {
-  if (!req.session.loggedIn) 
-    return res.status(401).end(utils.createError("Only logged in users can use this service"))
-  utils.handleInvalidRoute(req, res)
+router.post("*",utils.checkToken, (req, res) => {
+   utils.handleInvalidRoute(req, res)
 }); 
 
 

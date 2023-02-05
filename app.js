@@ -21,7 +21,7 @@ const rateLimiter = new RateLimiterMemory(options);
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var aiRouter = require('./routes/ai.js')
-const session = require('express-session');
+
 var app = express();
 
 var mongoDB = require('./persistence/db.js')
@@ -31,12 +31,7 @@ app.use(helmet());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-
-app.use(session({
-  secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
-  resave: false,
-  saveUninitialized: true
-}));
+app.use(express.json());
 
 app.use(logger('dev'));
 app.use(express.json());
