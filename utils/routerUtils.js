@@ -23,7 +23,6 @@ const utils = {
                 error: "Access denied. No token provided."
             });
         }
-
         try {
             // verify the token using the secret key
             const decoded = jwt.verify(token, process.env.JWT_TOKEN);

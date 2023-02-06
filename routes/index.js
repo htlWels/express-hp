@@ -120,7 +120,7 @@ router.post('/login', async (request, response, next) => {
             success: true,
             data: {
               userId: storedUser.id,
-              user: storedUser.user, token: token
+              user: storedUser.loginInfo.user, token: token
             },
           });
       } catch (err) {
@@ -159,14 +159,28 @@ router.post('/login', async (request, response, next) => {
 });
 
 router.get('/logout', utils.checkToken,(req, res) => {
- // req.session.destroy();
   //res.redirect('/');
+  req.status(200)
+          .json({
+            success: true
+          });
   console.log("Log out")
+  
 })
 
 router.get('/status', utils.checkToken,(req, res) => {
  
     const us = req.session.user
+    
+    req.status(200)
+    .json({
+      success: true,
+      data: {
+        user: us.loginInfo.user,
+        role: us.role
+      },
+    });
+    
     res.send('You are logged in: ' + us.loginInfo.user + ", role: " + us.role);
  
 });
