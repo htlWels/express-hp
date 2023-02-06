@@ -7,9 +7,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const helmet = require("helmet");
 var cors = require('cors')
-//import { IRateLimiterOptions, RateLimiterMemory } from 'rate-limiter-flexible';
 
-var { IRateLimiterOptions, RateLimiterMemory } = require('rate-limiter-flexible');
+var { RateLimiterMemory } = require('rate-limiter-flexible');
 
 require('dotenv').config()
 
