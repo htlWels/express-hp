@@ -6,6 +6,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const helmet = require("helmet");
+var cors = require('cors')
 //import { IRateLimiterOptions, RateLimiterMemory } from 'rate-limiter-flexible';
 
 var { IRateLimiterOptions, RateLimiterMemory } = require('rate-limiter-flexible');
@@ -32,7 +33,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(express.json());
-
+app.use(cors())   /// only for devel
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
