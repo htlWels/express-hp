@@ -42,10 +42,7 @@ function jwt_createToken(newUser) {
 }
 
 router.post('/register', async (req, res) => {
-  /*   if (req.session.loggedIn) 
-      return res.status(401).end(utils.createError("You are already logged in!"))
-   */
-  try {
+   try {
     const { username, password, role } = req.body;
     if (username && password) {
       console.log("Username: " + username)
@@ -181,7 +178,7 @@ router.get('/status', utils.checkToken,(req, res) => {
       },
     });
     
-    res.send('You are logged in: ' + us.loginInfo.user + ", role: " + us.role);
+//    res.send('You are logged in: ' + us.loginInfo.user + ", role: " + us.role);
  
 });
 
