@@ -6,6 +6,7 @@ const utils = require("../utils/routerUtils")
 //const users = require('../utils/userPassword.js');
 const userManagement = require('../persistence/controller/UserlController')
 
+
 /*   Used HTTP Error Codes
 400: client side error (wrong/missing fieldnames:  username,password)
 409: jwt token: cannot create token
