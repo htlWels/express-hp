@@ -118,7 +118,8 @@ router.post('/login', async (request, response, next) => {
             success: true,
             data: {
               userId: storedUser.id,
-              user: storedUser.loginInfo.user, token: token
+              user: storedUser.loginInfo.user, 
+              token: token
             },
           });
       } catch (err) {

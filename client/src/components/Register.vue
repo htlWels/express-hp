@@ -1,47 +1,81 @@
- <template>
-  <div id="app">
-    <div id="login">
-      <div id="description">
-        <h1>Register</h1>
+<template>
+  <h1>Register</h1>
+ <div class="container mt-5" style="max-width: 50%">
+    <form  @submit.prevent="doRegister">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="fas fa-user"></i>
+            </span>
+          </div>
+          <input type="text" class="form-control" id="username" v-model="username" placeholder="Username">
+        </div>
       </div>
-      <div id="form">
-        <form @submit.prevent="doRegister">
-          <label for="username">Username</label>
-          <input
-            type="text"
-            id="username"
-            v-model="username"
-            placeholder="elon musk"
-            autocomplete="off"
-          />
-
-          <label for="password">Password</label>&nbsp;
-          <i @click="hidePassword = !hidePassword"></i>
-          <input
-            type="password"
-            id="password"
-            v-model="password"
-            placeholder="**********"
-          />
-
-          <button type="submit">Register</button>
-        </form>
-        <div v-if= "error">
-        <h2>ERROR</h2>
-        <p>{{ error }}</p>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="fas fa-lock"></i>
+            </span>
+          </div>
+          <input type="password" class="form-control" id="password" v-model="password" placeholder="Password">
+        </div>
       </div>
+      <div class="form-group">
+        <label for="role">Role</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="fas fa-user-tag"></i>
+            </span>
+          </div>
+          <select class="form-control" id="role" v-model="role">
+            <option value="admin">admin</option>
+            <option value="user">user</option>
+            <option value="user">devel</option>
+          </select>
+        </div>
       </div>
-    </div>
+      <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="locked" v-model="locked">
+        <label class="form-check-label" for="locked">Locked</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <i class="fas fa-lock"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
   </div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      username: '',
+      password: '',
+      role: 'admin',
+      locked: false
+    }
+  }
+}
+</script>
 
 <script setup>
 import { ref } from 'vue';
 import router from '@/router';
 let username = ref('');
-const hidePassword = ref(true);
 let password = ref('');
 let error= ref('')
+let role = ref('admin')
+let locked=ref(false)
 
 const doRegister = () => {
   error.value=""
@@ -51,6 +85,8 @@ const doRegister = () => {
     body: JSON.stringify({
       username: username.value,
       password: password.value,
+      role:role.value,
+      locked: locked.value
     }),
   };
   fetch('/register', requestOptions).then((response) => {

@@ -2,13 +2,13 @@
   <div class="login-page bg-light">
     <div class="container">
       <div class="row">
-        <div class="col-lg-10 offset-lg-1">
+        <div class="col-lg-10 offset-lg-1"> 
           <h3 class="mb-3">Login Now</h3>
           <div class="bg-white shadow rounded">
             <div class="row">
               <div class="col-md-7 pe-0">
                 <div class="form-left h-100 py-5 px-5">
-                  <form action="" class="row g-4">
+                  <form @submit.prevent="doLogin" class="row g-4">
                     <div class="col-12">
                       <label>Username<span class="text-danger">*</span></label>
                       <div class="input-group">
@@ -55,7 +55,33 @@
                         >Forgot Password?</a
                       >
                     </div>
+                    <hr />
                     <div class="col-12">
+                      <div class="form-check-label">
+                        <label class="form-check-label" for="inlineFormCheck"
+                          >Don't have an account?</label
+                        >
+                        <i
+                          class="bi bi-box-arrow-in-right px-2"
+                          style="font-size: 2rem; color: cornflowerblue"
+                        ></i>
+                        <a href="#" class="text-primary px-2">Sign in</a>
+                      </div>
+                    </div>
+                    <div class="col-12" v-if="error !=''">
+                      <div class="form-check-label">
+                        <label class="form-check-label" for="inlineFormCheck"
+                          >Error</label
+                        >
+                        {{error }}
+                                              <i
+                          class="bi bi-bug px-2"
+                          style="font-size: 2rem; color: red"
+                        ></i>
+                       
+                      </div>
+                    </div>
+                    <div class="col-6">
                       <button
                         @click="login"
                         type="submit"
@@ -85,13 +111,46 @@
     </div>
   </div>
 
-  <!-- Bootstrap JS -->
-
-  <!-- Bootstrap JS -->
 </template>
 
 <script setup>
- 
+import { ref } from "vue";
+import router from "@/router";
+let username = ref("");
+let password = ref("");
+let error = ref("");
+let HOST="http://localhost:3001"
+
+const doLogin = () => {
+  error.value = "";
+  //const hash = bcrypt.hashSync(password.value, salt);
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      username: username.value,
+      password: password.value,
+    }),
+  };
+  fetch(`${HOST}/login`, requestOptions).then((response) => {
+    if (response.status == 200) {
+      localStorage.setItem("token", {
+        userID:response.data.userId,
+        user: response.data.user,
+        token: response.data.token
+      });
+      router.push("/home");
+    } else if (response.status == 435) {
+      error="User: " +  username.value + " not known!"
+      router.push("/register");
+
+    } 
+    else if (response.status == 436) {
+      error.value = "Wrong password";
+      password.value = "";
+    } else error.value = "Error on server side!";
+  });
+};
 </script>
 
 <style>
