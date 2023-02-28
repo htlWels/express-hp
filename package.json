@@ -19,9 +19,6 @@
     "mongoose": "^6.9.0",
     "morgan": "~1.9.1",
     "openai": "^3.1.0",
-    "passport": "^0.6.0",
-    "passport-jwt": "^4.0.1",
-    "passport-local": "^1.0.0",
     "rate-limiter-flexible": "^2.4.1",
     "vue-router": "^4.1.6"
   }
