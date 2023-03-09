@@ -49,6 +49,7 @@ passport.use(new GoogleStrategy({
 }
 ))
 
+console.log(process.env.CLIENT_GOOGLE_CB)
 
 
 // Serialize user

@@ -43,7 +43,7 @@ function jwt_createToken(newUser) {
     return token
   } catch (err) {
     console.log("Error in creating token: " + err)
-    throw new Error("Error in creating token: " + err);
+    return null
   }
 
 }
@@ -58,9 +58,10 @@ router.post('/register', async (req, res) => {
         password,
         role == null ? 'user' : role
       );
-      try {
-        //Creating jwt token
-        token = jwt_createToken(newUser)
+
+      //Creating jwt token
+      token = jwt_createToken(newUser)
+      if (token) {
         res.status(200)
           .json({
             success: true,
@@ -69,7 +70,8 @@ router.post('/register', async (req, res) => {
               user: username, token: token
             },
           });
-      } catch (err) {
+      }
+      else {
         res
           .status(409)
           .json({
@@ -149,11 +151,27 @@ router.get('/auth/error', (req, res) => {
 })
 
 router.get("/auth/success", (req, res) => {
-  res.json({
-    success: true,
-    user: req.user,
-    password: true,
-  })
+  console.log("Success : " + req.user)
+  token = jwt_createToken(newUser)
+  if (token) {
+    res.status(200)
+      .json({
+        success: true,
+        userId: newUser.id,
+        user: req.user,
+        token: token
+      });
+  }
+  else {
+    res
+      .status(409)
+      .json({
+        error: "Error creating JWT"
+      })
+
+  }
+
+
 })
 
 /////////////   GITHUB
@@ -161,7 +179,7 @@ router.get("/auth/success", (req, res) => {
 router.get('/auth/github', passport.authenticate('github',
   passport.authenticate('google', {
     scope: ['email', 'profile']
-  }));
+  })))
 
 router.get('/auth/github/callback', passport.authenticate('github',
   {
