@@ -12,6 +12,13 @@ var { RateLimiterMemory } = require('rate-limiter-flexible');
 
 require('dotenv').config()
 
+
+const passport = require('passport')
+
+const session = require('express-session')
+/* const authUser = require('./utils/authPassportLocalStrategy')
+passport.use(new LocalStrategy (authUser))
+ */
 const options = {
   points: 5, // 5 requests
   duration: 1, // per second
@@ -38,6 +45,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+/* *********************** PASSPORT ******************** */
+
+app.use(session({
+  secret: "secret",
+  resave: false ,
+  saveUninitialized: true ,
+}))
+// This is the basic express session({..}) initialization.
+app.use(passport.initialize()) 
+// init passport on every route call.
+app.use(passport.session())    
+// allow passport to use "express-session".
+/* *********************** ROUTER ******************** */
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -68,6 +89,27 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+process.on('uncaughtException', err => {
+  console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+  console.log(err.name, err.message);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', err => {
+  console.log('UNHANDLED REJECTION! 💥 Shutting down...');
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
+});
+
+process.on('SIGTERM', () => {
+  console.log('👋 SIGTERM RECEIVED. Shutting down gracefully');
+  server.close(() => {
+    console.log('💥 Process terminated!');
+  });
 });
 
 module.exports = app;

@@ -1,10 +1,12 @@
 var express = require('express');
 var router = express.Router();
 
+
 const jwt = require("jsonwebtoken");
 const utils = require("../utils/routerUtils")
 //const users = require('../utils/userPassword.js');
 const userManagement = require('../persistence/controller/UserlController')
+const passport = require('../utils/authori');
 
 
 /*   Used HTTP Error Codes
@@ -18,13 +20,17 @@ const userManagement = require('../persistence/controller/UserlController')
 
 */
 
-
-
-/* GET home page. */
-/* router.get('/', function (req, res, next) {
-  res.render('index', { title: 'Express' });
-}); */
-/* ************************************** **************************** ****************** */
+function isLoggedIn(req, res, next) {
+  if (req.user) {
+    next();
+  } else {
+    res
+      .status(500)  // unexpected error
+      .json({
+        error: "Error on server side"
+      })
+  }
+};
 
 function jwt_createToken(newUser) {
   try {
@@ -43,7 +49,7 @@ function jwt_createToken(newUser) {
 }
 
 router.post('/register', async (req, res) => {
-   try {
+  try {
     const { username, password, role } = req.body;
     if (username && password) {
       console.log("Username: " + username)
@@ -65,113 +71,131 @@ router.post('/register', async (req, res) => {
           });
       } catch (err) {
         res
-        .status(409)
-        .json({
-          error: "Error creating JWT"
-        })
+          .status(409)
+          .json({
+            error: "Error creating JWT"
+          })
 
       }
 
     } else {
       console.log("Required parameters: username, password not provided")
       res
-      .status(400)
-      .json({
-        error: "Required parameters: username, password not provided"
-      })
+        .status(400)
+        .json({
+          error: "Required parameters: username, password not provided"
+        })
     }
   } catch (err) {
     console.log(err)
     if (err.message.startsWith("User"))
       res
-      .status(437) // user already exists
-      .json({
-        error:"User already exists"
-      })
+        .status(437) // user already exists
+        .json({
+          error: "User already exists"
+        })
     else
       res
-      .status(500)  // unexpected error
-      .json({
-        error:"Error on server side"
-      })
+        .status(500)  // unexpected error
+        .json({
+          error: "Error on server side"
+        })
   }
 });
 
 
+// local 
 
-
-router.post('/login', async (request, response, next) => {
-  // Capture the input fields
-  const { username, password } = request.body;
-
-  // Ensure the input fields exists and are not empty
-  if (username && password) {
+router.post('/login', async (req, res, next) => {
+  passport.authenticate('local', async (err, user, info) => {
     try {
-      const { isPasswordMatched, storedUser } = await userManagement.user_authorized(username, password);
-      if (isPasswordMatched == false)
-        return response.sendStatus(436)
-      try {
-        //Creating jwt token
-        token = jwt_createToken(storedUser)
-        response.status(200)
-          .json({
-            success: true,
-            data: {
-              userId: storedUser.id,
-              user: storedUser.loginInfo.user, 
-              token: token
-            },
-          });
-      } catch (err) {
-        res
-        .status(409)
-        .json({
-          error:"Error creating JWT"
-        })
+      if (err) {
+        console.log("Error occured in authenicating local: " + err)
+        return next(err);
       }
-
-    }
-    catch (err) {
-      if (err.message.startsWith("User"))
-        response
-        .status(435)
-        .json({
-          error:"User does not exist"
-        })
-      else {
-        console.log(err)
-        response
-        .status(500)
-        .json({
-          error:"Error on server side"
-        })
+      if (!user) {
+        return res
+          .status(435)
+          .json({ success: true, user: 0, passwordCheck: false });
       }
-
+      req.logIn(user, (err) => {
+        if (err) { return next(err); }
+        return res.json({ success: true, user: user._id, passwordCheck: true, role: user.role });
+      });
+    } catch (err) {
+      return next(err);
     }
-  } else {
-    response
-    .status(400)
-    .json({
-      error:"Missing parameters"
-    })
-  }
-});
-
-router.get('/logout', utils.checkToken,(req, res) => {
-  //res.redirect('/');
-  req.status(200)
-          .json({
-            success: true
-          });
-  console.log("Log out")
-  
+  })(req, res, next);
 })
 
-router.get('/status', utils.checkToken,(req, res) => {
- 
-    const us = req.session.user
-    
-    req.status(200)
+
+/*
+
+The GET /auth/github route initiates the Github authentication process 
+using the passport.authenticate middleware with the github strategy. 
+Once the authentication is completed, the user object is sent back in 
+the response in the GET /auth/github/callback route.
+ Here, the passport.authenticate middleware with the 
+ github strategy is called again to complete the authentication process.
+  If the authentication succeeds, the user object is sent back in the 
+  response. If it fails, a 401 unauthorized status is sent back.
+
+*/
+
+router.get('/auth/error', (req, res) => {
+  return res
+    .status(500)
+    .json({ success: false, error: "Error in OAuth2-Service" })
+})
+
+router.get("/auth/success", (req, res) => {
+  res.json({
+    success: true,
+    user: req.user,
+    password: true,
+  })
+})
+
+/////////////   GITHUB
+
+router.get('/auth/github', passport.authenticate('github',
+  passport.authenticate('google', {
+    scope: ['email', 'profile']
+  }));
+
+router.get('/auth/github/callback', passport.authenticate('github',
+  {
+    successRedirect: "/auth/success",
+    failureRedirect: "/auth/failure",
+  }))
+
+
+/////////////   GOOGLE
+
+
+router.get('/auth/google',
+  passport.authenticate('google', {
+    scope: ['email', 'profile']
+  }));
+router.get('/auth/google/callback', passport.authenticate('google', {
+  successRedirect: '/auth/success',
+  failureRedirect: '/auth/failure'
+}));
+
+router.get('/logout', utils.checkToken, (req, res) => {
+  //res.redirect('/');
+  req.status(200)
+    .json({
+      success: true
+    });
+  console.log("Log out")
+
+})
+
+router.get('/status', utils.checkToken, (req, res) => {
+  const us = req.session.user
+
+  req.status(200)
     .json({
       success: true,
       data: {
@@ -179,9 +203,15 @@ router.get('/status', utils.checkToken,(req, res) => {
         role: us.role
       },
     });
-    
-//    res.send('You are logged in: ' + us.loginInfo.user + ", role: " + us.role);
- 
+
+  //    res.send('You are logged in: ' + us.loginInfo.user + ", role: " + us.role);
+
+});
+
+router.get("/logout", (req, res) => {
+  req.session = null; // destroy session
+  req.logout(); //logout from passport
+  res.redirect("/login"); //redirect to home.
 });
 
 module.exports = router;
