@@ -49,7 +49,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 /* *********************** PASSPORT ******************** */
 
 app.use(session({
-  secret: "secret",
+  secret: "12Nic&7aafjkl!!öösldeutschRoemisch360!!23",
   resave: false ,
   saveUninitialized: true ,
 }))

@@ -53,6 +53,7 @@ console.log(process.env.CLIENT_GOOGLE_CB)
 
 
 // Serialize user
+// This "user" object is attached to  "req.session.passport.user.{user}"
 passport.serializeUser((user, done) => {
   done(null, user);
 });

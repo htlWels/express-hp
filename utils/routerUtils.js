@@ -13,6 +13,12 @@ const utils = {
     createError: function (errorMessage) {
         return JSON.stringify({ error: errorMessage })
     },
+    checkAuthenticated: function (req, res, next)  {
+        if (req.isAuthenticated()) { return next() }
+        return res.status(401).json({
+            error: "Only logged in users can use this service"
+        });
+      },
     // middleware function to check JWT token
     checkToken: function (req, res, next) {
         // get the token from the request header
