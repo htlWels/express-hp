@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const utils = require("../utils/routerUtils")
 //const users = require('../utils/userPassword.js');
 const userManagement = require('../persistence/controller/UserlController')
-const passport = require('../utils/authori');
+const passport = require('../utils/configPassport');
 
 
 /*   Used HTTP Error Codes
@@ -151,7 +151,7 @@ router.get('/auth/error', (req, res) => {
 })
 
 router.get("/auth/success", (req, res) => {
-  console.log("Success : " + req.session.passport.user.email)
+  //console.log("Success : " + req.session.passport.user.email)
   token = jwt_createToken(req.session.passport.user.email
     )
   if (token) {
