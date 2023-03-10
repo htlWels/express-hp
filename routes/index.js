@@ -157,8 +157,7 @@ router.get("/auth/success", (req, res) => {
     res.status(200)
       .json({
         success: true,
-        userId: newUser.id,
-        user: req.user,
+        user: req.session.passport.user,
         token: token
       });
   }
@@ -227,7 +226,7 @@ router.get('/status', utils.checkToken, (req, res) => {
 });
 
 router.get("/logout", (req, res) => {
-  req.session = null; // destroy session
+  req.session.user = null; // destroy session
   req.logout(); //logout from passport
   res.redirect("/login"); //redirect to home.
 });
