@@ -151,13 +151,14 @@ router.get('/auth/error', (req, res) => {
 })
 
 router.get("/auth/success", (req, res) => {
-  console.log("Success : " + req.user)
-  token = jwt_createToken(newUser)
+  console.log("Success : " + req.session.passport.user.email)
+  token = jwt_createToken(req.session.passport.user.email
+    )
   if (token) {
     res.status(200)
       .json({
         success: true,
-        user: req.session.passport.user,
+        user: req.session.passport.user.email,
         token: token
       });
   }
@@ -188,7 +189,7 @@ router.get('/auth/github/callback', passport.authenticate('github',
 
 
 /////////////   GOOGLE
-
+// https://console.cloud.google.com/welcome?project=unify-302817&hl=de
 
 router.get('/auth/google',
   passport.authenticate('google', {
