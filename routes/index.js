@@ -151,9 +151,9 @@ router.get('/auth/error', (req, res) => {
 })
 
 router.get("/auth/success", (req, res) => {
-  //console.log("Success : " + req.session.passport.user.email)
+  console.log("Success : " + req.session.passport.user)
   token = jwt_createToken(req.session.passport.user.email
-    )
+  )
   if (token) {
     res.status(200)
       .json({
@@ -171,8 +171,8 @@ router.get("/auth/success", (req, res) => {
 
   }
 
-
 })
+
 
 /////////////   GITHUB
 
@@ -188,6 +188,39 @@ router.get('/auth/github/callback', passport.authenticate('github',
   }))
 
 
+
+function retError(req, res) {
+  return res
+    .status(500)
+    .json({ success: false, error: "Error in OAuth2-Service" })
+}
+
+
+function retOK(req, res) {
+  console.log("Success : " + req.session.passport.user)
+  token = jwt_createToken(req.session.passport.user.email
+  )
+  if (token) {
+    res.status(200)
+      .json({
+        success: true,
+        user: req.session.passport.user.email,
+        token: token
+      });
+  }
+  else {
+    res
+      .status(409)
+      .json({
+        error: "Error creating JWT"
+      })
+
+  }
+
+}
+
+
+
 /////////////   GOOGLE
 // https://console.cloud.google.com/welcome?project=unify-302817&hl=de
 
@@ -195,13 +228,28 @@ router.get('/auth/google',
   passport.authenticate('google', {
     scope: ['email', 'profile']
   }));
-router.get('/auth/google/callback', passport.authenticate('google', {
-  successRedirect: '/auth/success',
-  failureRedirect: '/auth/failure'
-}));
+
+/* router.get('/auth/google/callback', passport.authenticate('google', {
+successRedirect: '/auth/success',
+failureRedirect: '/auth/failure'
+})); */
+
+
+router.get('/auth/google/callback',
+  passport.authenticate('google', { session: true }),
+  function (req, res, info) {
+    if (req.isAuthenticated()) {
+      retOK(req, res)
+    } else
+      retError(req, res)
+
+  });
+
+
 
 router.get('/logout', utils.checkToken, (req, res) => {
   //res.redirect('/');
+  reg.logOut()
   req.status(200)
     .json({
       success: true
@@ -211,15 +259,13 @@ router.get('/logout', utils.checkToken, (req, res) => {
 })
 
 router.get('/status', utils.checkToken, (req, res) => {
-  const us = req.session.user
+ // const us = req.session.user
 
   req.status(200)
     .json({
       success: true,
-      data: {
-        user: us.loginInfo.user,
-        role: us.role
-      },
+      loggedOn:  req.isAuthenticated()
+
     });
 
   //    res.send('You are logged in: ' + us.loginInfo.user + ", role: " + us.role);
@@ -229,7 +275,8 @@ router.get('/status', utils.checkToken, (req, res) => {
 router.get("/logout", (req, res) => {
   req.session.user = null; // destroy session
   req.logout(); //logout from passport
-  res.redirect("/login"); //redirect to home.
+  //res.redirect("/login"); //redirect to home.
+  
 });
 
 module.exports = router;

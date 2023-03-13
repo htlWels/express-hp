@@ -14,12 +14,15 @@ passport.use(new LocalStrategy(
   async (username, password, done) => {
     const storedUser = await User.findOne({ 'loginInfo.user': username });
     if (!storedUser) {
-      console.log(`User: ${_user} not found.`);
+      console.log(`User: ${username} not found.`);
       return done(null, false);
     }
     const isPasswordMatched = await storedUser.comparePassword(password);
-    if (!isPasswordMatched)
-      return done(null, false);
+    if (!isPasswordMatched) {
+      console.log(`User: ${username} - Password does not match`)
+      return done(null, false)
+    }
+      
     return done(null, storedUser);
   }))
 

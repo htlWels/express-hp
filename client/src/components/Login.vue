@@ -2,13 +2,13 @@
   <div class="login-page bg-light">
     <div class="container">
       <div class="row">
-        <div class="col-lg-10 offset-lg-1"> 
+        <div class="col-lg-10 offset-lg-1">
           <h3 class="mb-3">Login Now</h3>
           <div class="bg-white shadow rounded">
             <div class="row">
               <div class="col-md-7 pe-0">
                 <div class="form-left h-100 py-5 px-5">
-                  <form @submit.prevent="doLogin" class="row g-4">
+                  <form   class="row g-4">
                     <div class="col-12">
                       <label>Username<span class="text-danger">*</span></label>
                       <div class="input-group">
@@ -68,26 +68,40 @@
                         <a href="#" class="text-primary px-2">Sign in</a>
                       </div>
                     </div>
-                    <div class="col-12" v-if="error !=''">
+                    <div class="col-12" v-if="error != ''">
                       <div class="form-check-label">
                         <label class="form-check-label" for="inlineFormCheck"
                           >Error</label
                         >
-                        {{error }}
-                                              <i
+                        {{ error }}
+                        <i
                           class="bi bi-bug px-2"
                           style="font-size: 2rem; color: red"
                         ></i>
-                       
                       </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-5">
                       <button
-                        @click="login"
+                        @click="doLogin"
                         type="submit"
-                        class="btn btn-primary px-4 float-end mt-4"
+                        class="btn btn-outline-primary px-4 float-end mt-4"
                       >
-                        login
+                      <i class="bi bi-house-lock"></i>
+                        Login
+                      </button>
+                    </div>
+
+                    <div class="col-6">
+                    
+                      <button
+                        @click="loginGoogle"
+                        type="submit"
+                        class="btn ml-4 btn-outline-primary mt-4"
+                       
+                        
+                      >
+                      <i class="bi bi-google" style="color:red"></i>
+                        Login with Google
                       </button>
                     </div>
                   </form>
@@ -95,12 +109,13 @@
               </div>
               <div class="col-md-5 ps-0 d-none d-md-block">
                 <div
-                  class="form-right h-100 bg-primary text-white text-center pt-5"
-                >
-                  <i class="bi bi-bootstrap"></i>
-                  <h2 class="fs-1">Welcome Back!!!</h2>
+                  class="form-right h-200 w-400 text-white text-center pt-5"></div>
+                
+                  
+                  <img src="https://img.freepik.com/free-photo/reflection-mountain-beautiful-lake_181624-4853.jpg?size=626&ext=jpg" width="360"/>
+                
+                   <h2 class="mt-5">Welcome back!</h2>
                 </div>
-              </div>
             </div>
           </div>
           <p class="text-end text-secondary mt-3">
@@ -110,7 +125,6 @@
       </div>
     </div>
   </div>
-
 </template>
 
 <script setup>
@@ -119,10 +133,19 @@ import router from "@/router";
 let username = ref("");
 let password = ref("");
 let error = ref("");
-let HOST="http://localhost:3001"
+let HOST = "http://localhost:3001";
 
 const doLogin = () => {
+  console.log("doLogin ...")
   error.value = "";
+  if (username.value.length==0) {
+    error.value="Field 'user' cannot be empty!"
+    return;
+  }
+  if (password.value.length==0) {
+    error.value="Field 'password' cannot be empty!"
+    return;
+  }
   //const hash = bcrypt.hashSync(password.value, salt);
   const requestOptions = {
     method: "POST",
@@ -132,25 +155,44 @@ const doLogin = () => {
       password: password.value,
     }),
   };
-  fetch(`${HOST}/login`, requestOptions).then((response) => {
+  fetch(`${HOST}/login`, requestOptions)
+  .then((response) => {
     if (response.status == 200) {
       localStorage.setItem("token", {
-        userID:response.data.userId,
+        userID: response.data.userId,
         user: response.data.user,
-        token: response.data.token
+        token: response.data.token,
       });
       router.push("/home");
     } else if (response.status == 435) {
-      error="User: " +  username.value + " not known!"
+      error = "User: " + username.value + " not known!";
       router.push("/register");
-
-    } 
-    else if (response.status == 436) {
+    } else if (response.status == 436) {
       error.value = "Wrong password";
       password.value = "";
     } else error.value = "Error on server side!";
   });
 };
+
+function loginGoogle() {
+  console.log("loginGoogle ...")
+  fetch(`${HOST}/auth/google`).then((response) => {
+    if (response.status == 200) {
+      localStorage.setItem("token", {
+        userID: response.data.userId,
+        user: response.data.user,
+        token: response.data.token,
+      });
+      router.push("/home");
+    } else if (response.status == 435) {
+      error = "User: " + username.value + " not known!";
+      router.push("/register");
+    } else if (response.status == 436) {
+      error.value = "Wrong password";
+      password.value = "";
+    } else error.value = "Error on server side!";
+  });
+}
 </script>
 
 <style>
