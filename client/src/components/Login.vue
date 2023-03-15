@@ -159,10 +159,9 @@ const doLogin = () => {
   .then((response) => {
     if (response.status == 200) {
       localStorage.setItem("token", {
-        userID: response.data.userId,
-        user: response.data.user,
-        token: response.data.token,
-      });
+        userID: response.email,
+        token: response.token,
+      }); 
       router.push("/home");
     } else if (response.status == 435) {
       error = "User: " + username.value + " not known!";

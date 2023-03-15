@@ -197,7 +197,7 @@ function retError(req, res) {
 
 
 function retOK(req, res) {
-  console.log("Success : " + req.session.passport.user)
+  //console.log("Success : " + req.session.passport.user)
   token = jwt_createToken(req.session.passport.user.email
   )
   if (token) {
