@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt')
 const mongoose = require('./../db'),
     { Schema } = mongoose
 
-
+  
 const UserSchema = new Schema({
     loginInfo: {
         user: {

@@ -28,6 +28,7 @@ const rateLimiter = new RateLimiterMemory(options);
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var aiRouter = require('./routes/ai.js')
+var imageRouter=require("./routes/images.js")
 
 var app = express();
 
@@ -63,6 +64,7 @@ app.use(passport.session())
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/ai',aiRouter)
+app.use('/images',imageRouter)
 
 app.use((req, res, next) => {
   rateLimiter.consume(req.ip)

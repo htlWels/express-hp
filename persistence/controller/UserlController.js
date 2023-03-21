@@ -1,7 +1,7 @@
 /* global require */
 
 const User = require('../model/User')
-
+ 
 
 exports.user_authorized = async function (_user, _passwd) {
     const storedUser = await User.findOne({ 'loginInfo.user': _user });
