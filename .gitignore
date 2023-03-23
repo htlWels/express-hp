@@ -133,5 +133,4 @@ security.*
 endpoint.http
 node_modules
 
-client.*
 *.pem
