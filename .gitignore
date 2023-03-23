@@ -134,4 +134,4 @@ endpoint.http
 node_modules
 
 *.pem
-client/node_modules
+Client/node_modules
